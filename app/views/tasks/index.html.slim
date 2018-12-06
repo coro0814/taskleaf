@@ -1,0 +1,39 @@
+h1 やることリスト
+
+= search_form_for @q, id: 'fm', class: 'mb-5'  do |f|
+  .form-group.row
+    /:name_contをつけるとransackがILIKEで検索してくれる
+    = f.label :name_cont, 'やること', class: 'col-sm-2 col-form-label'
+    .col-sm-10
+     =f.search_field :name_cont, class: 'form-control'
+  .form-group.row
+    = f.label :created_at_gteq, '登録日時' , class: 'col-sm-2 col-form-label'
+    .col-sm-10
+     =f.search_field :created_at_gteq, class: 'form-control'
+  .form-group
+    = f.submit 'さがす', class: 'search-btn'
+
+= link_to 'つくる', new_task_path, class: 'btn btn-primary mb-3'
+
+.mb-3
+  = paginate @tasks
+  = page_entries_info @tasks
+
+.mb-3
+table.table.table-hover
+  thread.thread-default
+    tr
+      /th= Task.human_attribute_name (:name)
+      /th= Task.human_attribute_name (:created_at)
+      th= sort_link(@q, :name)
+      th= sort_link(@q, :created_at)
+      th
+  tbody
+    - @tasks.each do |task|
+      tr id="task-#{task.id}"
+        td= link_to task.name, task_path(task)
+        td= task.created_at
+        td
+          = link_to 'へんしゅう', edit_task_path(task), class: 'btn btn-primary mr-3'
+          /remote: trueをつけるとdata-remote属性が付与されて、Ajaxでリクエスト送信される
+          = link_to 'さくじょ', task, method: :delete, remote: true,  data: {confirm: "タスク「#{task.name}」をさくじょしていいですか？"}, class: 'btn btn-danger delete'
